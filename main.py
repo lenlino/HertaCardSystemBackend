@@ -1,16 +1,21 @@
-# This is a sample Python script.
+import io
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from starlette.responses import StreamingResponse, Response
+
+import generate.generate
+
+app = FastAPI()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+@app.get("/gen_card/{uid}")
+async def gen_card(uid: str, select_number: int, is_uid_hide: bool, calculation_value: str, lang: str):
+    image_binary = io.BytesIO()
+    panel_img = await generate.generate.generate_panel(uid=uid, chara_id=int(select_number), template=2,
+                                                       is_hideUID=is_uid_hide
+                                                       , calculating_standard=calculation_value, lang=lang)
+    panel_img['img'].save(image_binary, 'PNG')
+    image_binary.seek(0)
+    print(image_binary)
+    return Response(content=image_binary.getvalue(), headers={"score": panel_img["score"]}, media_type="image/png")
