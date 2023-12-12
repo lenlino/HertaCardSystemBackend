@@ -14,5 +14,6 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.SECRET_KEY }}
           script: |
+            cd discordbot
             cd HertaCardSystemBackend
             git pull
