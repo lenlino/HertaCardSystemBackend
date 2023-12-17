@@ -292,6 +292,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
     result['img'] = img.resize((img.width // 2, img.height // 2))
     result['score'] = relic_full_score
     result['chara_name'] = helta_json['name']
+    result['avatar_id'] = helta_json['id']
     # img.save('lenna_square_pillow.png', quality=95)
     return result
 
