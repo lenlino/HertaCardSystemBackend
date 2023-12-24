@@ -6,6 +6,8 @@ import pandas as pd
 
 import aiohttp
 from PIL import Image
+from starrailres import Index
+from starrailres.models.info import CharacterBasicInfo, LevelInfo, LightConeBasicInfo, SubAffixBasicInfo, RelicBasicInfo
 
 conn = aiohttp.TCPConnector(limit_per_host=1)
 
@@ -23,10 +25,92 @@ async def get_image_from_url(url: str):
             return f"{os.path.dirname(os.path.abspath(__file__))}/{replaced_path}"
 
 
-async def get_json_from_url(url: str):
+async def get_json_from_url(uid: str, lang: str):
+    result_json = {}
     async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-        async with session.get(url) as response:
-            return await response.json()
+        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}") as response:
+            if response.status == 200:
+                result_json = await response.json()
+    if len(result_json.keys()) == 0 or "detail" in result_json:
+        filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
+        index = Index(filepath)
+        async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
+            async with session.get(f"https://enka.network/api/hsr/uid/{uid}") as response:
+                if response.status != 200:
+                    result_json["detail"] = response.status
+                    return result_json
+                enka_result_json = await response.json()
+                detail_info_json = enka_result_json["detailInfo"]
+                record_info_json = detail_info_json["recordInfo"]
+                result_json = {
+                    "player": {
+                        "uid": enka_result_json["uid"],
+                        "nickname": detail_info_json["nickname"],
+                        "level": detail_info_json["level"],
+                        "world_level": detail_info_json["worldLevel"],
+                        "friend_count": detail_info_json["friendCount"],
+                        "avatar": index.get_avatar_info(detail_info_json["headIcon"]),
+                        "signature": detail_info_json.get("signature", ""),
+                        "is_display": detail_info_json["isDisplayAvatar"],
+                        "space_info": {
+                            "memory_data": {
+                                "level": record_info_json.get("scheduleMaxLevel", 0),
+                                "chaos_id": 0,
+                                "chaos_level": 0
+                            },
+                            "universe_level": record_info_json["maxRogueChallengeScore"],
+                            "challenge_data": {
+                                "maze_group_id": 0,
+                                "maze_group_index": 0,
+                                "pre_maze_group_index": record_info_json.get("scheduleMaxLevel", 0)
+                            },
+                            "pass_area_progress": record_info_json["maxRogueChallengeScore"],
+                            "light_cone_count": record_info_json["equipmentCount"],
+                            "avatar_count": record_info_json["avatarCount"],
+                            "achievement_count": record_info_json["achievementCount"]
+                        }
+                    }
+                }
+                characters_list = []
+                for characters in detail_info_json["avatarDetailList"]:
+                    skill_list = []
+                    for skilltree in characters["skillTreeList"]:
+                        skill_list.append(LevelInfo(id=str(skilltree["pointId"]), level=int(skilltree["level"])))
+
+                    if "equipment" in characters:
+                        equipment = characters["equipment"]
+                        basic_light_cone = LightConeBasicInfo(id=str(equipment["tid"]), rank=int(equipment["rank"]),
+                                                              level=int(equipment["level"]),
+                                                              promotion=equipment["promotion"])
+                    else:
+                        basic_light_cone = None
+
+                    basic_relics = []
+                    for relic in characters["relicList"]:
+                        subaffix_list = []
+                        for subaffix in relic["subAffixList"]:
+                            subaffix_list.append(SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
+                                                                   step=subaffix.get("step", 0)))
+                        basic_relics.append(RelicBasicInfo(
+                            id=str(relic["tid"]),
+                            level=relic["level"],
+                            main_affix_id=str(relic["mainAffixId"]),
+                            sub_affix_info=subaffix_list,
+                        ))
+                    charabase_json = index.get_character_info(CharacterBasicInfo(
+                        id=str(characters["avatarId"]),
+                        rank=characters.get("rank", 0),
+                        level=characters["level"],
+                        promotion=characters["promotion"],
+                        skill_tree_levels=skill_list,
+                        light_cone=basic_light_cone,
+                        relics=basic_relics,
+                    ))
+                    if charabase_json:
+                        from msgspec import to_builtins
+                        characters_list.append(to_builtins(charabase_json))
+                result_json["characters"] = characters_list
+    return result_json
 
 
 def get_json_from_json(json_list, key, value):
@@ -191,17 +275,17 @@ def get_score_rank(chara_id, uid, score):
     df['rank'] = df['score'].rank(ascending=False, method='min')
     if before_score > score:
         df["score"][uid] = before_score
-        result['top_score'] = round(before_score, 1)
+        result['top_score'] = str(round(before_score, 1))
     else:
-        result['top_score'] = round(score, 1)
+        result['top_score'] = str(round(score, 1))
 
     df.to_json(json_path)
 
-    result["before_score"] = before_score
-    result['median'] = round(df.median()['score'], 1)
-    result['mean'] = round(df.mean()['score'], 1)
-    result['rank'] = int(round(df['rank'].get(uid, 1), 0))
-    result['data_count'] = len(df)
+    result["before_score"] = str(before_score)
+    result['median'] = str(round(df.median()['score'], 1))
+    result['mean'] = str(round(df.mean()['score'], 1))
+    result['rank'] = str(int(round(df['rank'].get(uid, 1), 0)))
+    result['data_count'] = str(len(df))
 
     return result
 
