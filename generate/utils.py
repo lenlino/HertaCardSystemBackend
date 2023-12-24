@@ -1,3 +1,4 @@
+import datetime
 import io
 import json
 import os
@@ -10,6 +11,7 @@ from starrailres import Index
 from starrailres.models.info import CharacterBasicInfo, LevelInfo, LightConeBasicInfo, SubAffixBasicInfo, RelicBasicInfo
 
 conn = aiohttp.TCPConnector(limit_per_host=1)
+
 
 async def get_image_from_url(url: str):
     replaced_path = url.replace("https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/", "")
@@ -25,8 +27,19 @@ async def get_image_from_url(url: str):
             return f"{os.path.dirname(os.path.abspath(__file__))}/{replaced_path}"
 
 
+temp_json = {}
+
+
 async def get_json_from_url(uid: str, lang: str):
     result_json = {}
+
+    # １分のインターバル
+    dt_now = datetime.datetime.now()
+    if uid in temp_json:
+        expires = temp_json[uid]["expires"]
+        if dt_now < expires:
+            return temp_json[uid]["result"]
+
     async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
         async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}") as response:
             if response.status == 200:
@@ -89,8 +102,9 @@ async def get_json_from_url(uid: str, lang: str):
                     for relic in characters["relicList"]:
                         subaffix_list = []
                         for subaffix in relic["subAffixList"]:
-                            subaffix_list.append(SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
-                                                                   step=subaffix.get("step", 0)))
+                            subaffix_list.append(
+                                SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
+                                                  step=subaffix.get("step", 0)))
                         basic_relics.append(RelicBasicInfo(
                             id=str(relic["tid"]),
                             level=relic["level"],
@@ -110,6 +124,8 @@ async def get_json_from_url(uid: str, lang: str):
                         from msgspec import to_builtins
                         characters_list.append(to_builtins(charabase_json))
                 result_json["characters"] = characters_list
+    temp_in_json = {"expires": (dt_now + datetime.timedelta(minutes=1)), "result": result_json}
+    temp_json[uid] = temp_in_json
     return result_json
 
 
@@ -269,7 +285,7 @@ def get_score_rank(chara_id, uid, score):
         df = pd.read_json(json_path, orient='columns')
     else:
         df = pd.DataFrame({"score": {}, "rank": {}})
-    uid = str(uid)+'u'
+    uid = str(uid) + 'u'
     before_score = df["score"].get(uid, 0)
     df.loc[uid] = [score, 0]
     df['rank'] = df['score'].rank(ascending=False, method='min')
@@ -288,5 +304,3 @@ def get_score_rank(chara_id, uid, score):
     result['data_count'] = str(len(df))
 
     return result
-
-

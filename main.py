@@ -1,10 +1,14 @@
+import datetime
 import io
 import os
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import i18n
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse, Response, JSONResponse
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import generate.generate
 from generate.utils import get_score_rank
@@ -37,3 +41,17 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
 async def sr_info_parsed(uid: str, lang: str = "jp"):
     json_compatible_item_data = jsonable_encoder(await generate.utils.get_json_from_url(uid, lang))
     return JSONResponse(content=json_compatible_item_data)
+
+
+async def remove_temp_task():
+    dt_now = datetime.datetime.now()
+    for k, v in list(generate.utils.temp_json.items()):
+        if dt_now > v["expires"]:
+            generate.utils.temp_json.pop(k, None)
+
+
+@app.on_event("startup")
+async def skd_process():
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(remove_temp_task, "interval", minutes=1)
+    scheduler.start()
