@@ -3,6 +3,7 @@ import io
 import os
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from starlette.middleware.cors import CORSMiddleware
 
 import i18n
 from fastapi import FastAPI
@@ -17,6 +18,17 @@ i18n.load_path.append(f"{os.path.dirname(os.path.abspath(__file__))}/i18n")
 i18n.set('fallback', 'en')
 
 app = FastAPI()
+
+origins = [
+    "https://herta-hazel.vercel.app/",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+)
 
 
 @app.get("/gen_card/{uid}")
