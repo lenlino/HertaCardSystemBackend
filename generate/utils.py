@@ -126,6 +126,7 @@ async def get_json_from_url(uid: str, lang: str):
                 result_json["characters"] = characters_list
     temp_in_json = {"expires": (dt_now + datetime.timedelta(minutes=1)), "result": result_json}
     temp_json[uid] = temp_in_json
+
     return result_json
 
 

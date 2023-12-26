@@ -6,7 +6,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from starlette.middleware.cors import CORSMiddleware
 
 import i18n
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse, Response, JSONResponse
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -42,6 +42,8 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
                                                        is_hideUID=is_uid_hide
                                                        , calculating_standard=calculation_value, lang=lang,
                                                        is_hide_roll=is_hide_roll)
+    if "detail" in panel_img:
+        raise HTTPException(status_code=panel_img["detail"])
     panel_img['img'].save(image_binary, 'PNG')
     image_binary.seek(0)
     score_rank = get_score_rank(int(panel_img['avatar_id']), uid, panel_img['score'])
@@ -55,7 +57,10 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
 
 @app.get("/sr_info_parsed/{uid}")
 async def sr_info_parsed(uid: str, lang: str = "jp"):
-    json_compatible_item_data = jsonable_encoder(await generate.utils.get_json_from_url(uid, lang))
+    result = await generate.utils.get_json_from_url(uid, lang)
+    if "detail" in result:
+        raise HTTPException(status_code=result["detail"])
+    json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
 
@@ -71,3 +76,8 @@ async def skd_process():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(remove_temp_task, "interval", minutes=1)
     scheduler.start()
+    os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
+    os.system("git clone --filter=blob:none --no-checkout https://github.com/Mar-7th/StarRailRes.git")
+    os.chdir('StarRailRes')
+    os.system("git sparse-checkout set index_min")
+    os.system("git checkout")
