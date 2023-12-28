@@ -24,7 +24,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         return json
     if lang == "jp" or lang == "cn" or lang == "cht":
         light_cone_name_limit = 9
-        chara_name_limit = 5
+        chara_name_limit = 7
         relic_main_affix_name_limit = 6
     else:
         light_cone_name_limit = 18
