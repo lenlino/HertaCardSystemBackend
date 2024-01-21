@@ -63,6 +63,11 @@ async def sr_info_parsed(uid: str, lang: str = "jp"):
     json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
+@app.get("/weight/{chara_id}")
+async def weight(chara_id: str):
+    result = generate.utils.get_all_weight(chara_id)
+    return JSONResponse(content=jsonable_encoder(result))
+
 
 async def remove_temp_task():
     dt_now = datetime.datetime.now()

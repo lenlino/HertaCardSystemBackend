@@ -278,6 +278,11 @@ def get_weight(chara_id):
         weight_json = json.load(f)
     return weight_json[str(chara_id)]["weight"]
 
+def get_all_weight(chara_id):
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/weight.json") as f:
+        weight_json = json.load(f)
+    return weight_json[str(chara_id)]
+
 
 def get_score_rank(chara_id, uid, score):
     json_path = f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}.json"
