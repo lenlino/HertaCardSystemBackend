@@ -163,7 +163,7 @@ def convert_old_roman_from_int(n):
 
 async def get_relic_score(chara_id, relic_json):
     # load
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/weight.json") as f:
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
         weight_json = json.load(f)
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/max.json") as f:
         max_json = json.load(f)
@@ -274,12 +274,12 @@ def get_mihomo_lang(discord_lang):
 
 
 def get_weight(chara_id):
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/weight.json") as f:
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
         weight_json = json.load(f)
     return weight_json[str(chara_id)]["weight"]
 
 def get_all_weight(chara_id):
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/weight.json") as f:
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
         weight_json = json.load(f)
     return weight_json[str(chara_id)]
 

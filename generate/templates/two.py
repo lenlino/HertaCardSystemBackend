@@ -159,7 +159,13 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         img.paste(icon, (1110 + yoko_zure, 60 + relic_index * 330), icon)
 
         img.paste(main_attribute_icon, (1200 + yoko_zure, 62 + relic_index * 330), main_attribute_icon)
-        draw.text((1240 + yoko_zure, 100 + relic_index * 330), f"{relic_main_affix_name}\n{i['main_affix']['display']}",
+        relice_effect_value = i['main_affix']['display']
+
+        # 速度小数点表示
+        if i['main_affix']['type'] == "SpeedDelta":
+            relice_effect_value = round(i['main_affix']['value'], 1)
+
+        draw.text((1240 + yoko_zure, 100 + relic_index * 330), f"{relic_main_affix_name}\n{relice_effect_value}",
                   font_color,
                   font=retic_main_affix_title_font, anchor="lm")
 
@@ -184,7 +190,14 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
             img.paste(sub_affix_icon, (1100 + yoko_zure, 175 + relic_index * 330 + sub_index * 50), sub_affix_icon)
             draw.text((1140 + yoko_zure, 180 + relic_index * 330 + sub_index * 50), f"{sub_i['name']}", font_color,
                       font=retic_title_font)
-            draw.text((1480 + yoko_zure, 180 + relic_index * 330 + sub_index * 50), f"{sub_i['display']}", font_color,
+
+            relice_subeffect_value = sub_i['display']
+
+            # 速度小数点表示
+            if sub_i['type'] == "SpeedDelta":
+                relice_subeffect_value = round(sub_i['value'], 1)
+
+            draw.text((1480 + yoko_zure, 180 + relic_index * 330 + sub_index * 50), f"{relice_subeffect_value}", font_color,
                       font=retic_title_font, anchor='ra')
 
             if is_hide_roll is False:

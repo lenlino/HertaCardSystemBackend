@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/generate/StarRailRes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/generate/StarRailScore" vcs="Git" />
   </component>
 </project>
