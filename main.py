@@ -76,17 +76,21 @@ async def remove_temp_task():
             generate.utils.temp_json.pop(k, None)
 
 
+async def update_weight_task():
+    os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
+    os.chdir('StarRailScore')
+    os.system("git checkout")
+
+
 @app.on_event("startup")
 async def skd_process():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(remove_temp_task, "interval", minutes=1)
-    scheduler.start()
+    scheduler.add_job(update_weight_task, "interval", minutes=60)
     os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
     os.system("git clone --filter=blob:none --no-checkout https://github.com/Mar-7th/StarRailRes.git")
     os.system("git clone --filter=blob:none --no-checkout https://github.com/lenlino/StarRailScore.git")
     os.chdir('StarRailRes')
     os.system("git sparse-checkout set index_min")
     os.system("git checkout")
-    os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
-    os.chdir('StarRailScore')
-    os.system("git checkout")
+    scheduler.start()
