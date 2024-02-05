@@ -80,6 +80,7 @@ async def update_weight_task():
     os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
     os.chdir('StarRailScore')
     os.system("git checkout")
+    os.system("git pull")
 
 
 @app.on_event("startup")
@@ -93,4 +94,6 @@ async def skd_process():
     os.chdir('StarRailRes')
     os.system("git sparse-checkout set index_min")
     os.system("git checkout")
+    os.system("git pull")
+    await update_weight_task()
     scheduler.start()
