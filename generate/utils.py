@@ -41,7 +41,7 @@ async def get_json_from_url(uid: str, lang: str):
             return temp_json[uid]["result"]
 
     async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}") as response:
+        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}",  timeout=1) as response:
             if response.status == 200:
                 result_json = await response.json()
     if len(result_json.keys()) == 0 or "detail" in result_json:
@@ -143,15 +143,15 @@ def get_file_path():
 
 def get_star_image_path_from_int(level: int):
     if level == 1:
-        return "icon/deco/Rarity1.png"
+        return "icon/deco/Star1.png"
     elif level == 2:
-        return "icon/deco/Rarity2.png"
+        return "icon/deco/Star2.png"
     elif level == 3:
-        return "icon/deco/Rarity3.png"
+        return "icon/deco/Star3.png"
     elif level == 4:
-        return "icon/deco/Rarity4.png"
+        return "icon/deco/Star4.png"
     elif level == 5:
-        return "icon/deco/Rarity5.png"
+        return "icon/deco/Star5.png"
 
 
 def convert_old_roman_from_int(n):
