@@ -147,11 +147,11 @@ def get_star_image_path_from_int(level: int):
     elif level == 2:
         return "icon/deco/Star2.png"
     elif level == 3:
-        return "icon/deco/Star3.png"
+        return "icon/deco/Rarity3.png"
     elif level == 4:
-        return "icon/deco/Star4.png"
+        return "icon/deco/Rarity4.png"
     elif level == 5:
-        return "icon/deco/Star5.png"
+        return "icon/deco/Rarity5.png"
 
 
 def convert_old_roman_from_int(n):
