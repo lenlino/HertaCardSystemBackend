@@ -41,7 +41,7 @@ async def get_json_from_url(uid: str, lang: str):
             return temp_json[uid]["result"]
 
     async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}",  timeout=1) as response:
+        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}",  timeout=2) as response:
             if response.status == 200:
                 result_json = await response.json()
     if len(result_json.keys()) == 0 or "detail" in result_json:
