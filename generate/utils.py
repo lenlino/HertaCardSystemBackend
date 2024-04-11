@@ -46,7 +46,8 @@ async def get_json_from_url(uid: str, lang: str):
                 if response.status == 200:
                     result_json = await response.json()
     except Exception as e:
-        print("timeout mihomo?" + e)
+        print("timeout mihomo?")
+        print(e)
 
     if len(result_json.keys()) == 0 or "detail" in result_json:
         filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
