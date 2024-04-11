@@ -45,8 +45,8 @@ async def get_json_from_url(uid: str, lang: str):
             async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}", timeout=3) as response:
                 if response.status == 200:
                     result_json = await response.json()
-    except asyncio.TimeoutError:
-        print("timeout mihomo")
+    except Exception as e:
+        print("timeout mihomo?" + e)
 
     if len(result_json.keys()) == 0 or "detail" in result_json:
         filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
