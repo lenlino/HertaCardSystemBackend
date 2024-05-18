@@ -41,7 +41,7 @@ async def get_json_from_url(uid: str, lang: str):
             return temp_json[uid]["result"]
 
     async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}",  timeout=2) as response:
+        async with session.get(f"https://api.mihomo.me/sr_info_parsed/{uid}?lang={lang}", timeout=2) as response:
             if response.status == 200:
                 result_json = await response.json()
     if len(result_json.keys()) == 0 or "detail" in result_json:
@@ -172,7 +172,7 @@ async def get_relic_score(chara_id, relic_json):
     result_json = {}
 
     # メインの計算
-    main_weight = weight_json[chara_id]["main"][relic_id_json.get(relic_json["id"], relic_json["id"])[-1]][
+    main_weight = weight_json[chara_id]["main"]["w" + relic_id_json.get(relic_json["id"], relic_json["id"])[-1]][
         relic_json["main_affix"]["type"]]
     main_affix_score = (relic_json["level"] + 1) / 16 * main_weight
     result_json[
@@ -278,14 +278,20 @@ def get_weight(chara_id):
         weight_json = json.load(f)
     return weight_json[str(chara_id)]["weight"]
 
+
 def get_all_weight(chara_id):
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
         weight_json = json.load(f)
+    if chara_id is None:
+        return weight_json
     return weight_json[str(chara_id)]
 
 
-def get_score_rank(chara_id, uid, score):
-    json_path = f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}.json"
+def get_score_rank(chara_id, uid, score, calculation_value="compatibility"):
+    if calculation_value != "compatibility" and calculation_value != "no_score":
+        json_path = f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}_{calculation_value}.json"
+    else:
+        json_path = f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}.json"
     result = {}
     if os.path.exists(json_path):
         df = pd.read_json(json_path, orient='columns')

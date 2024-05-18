@@ -142,6 +142,12 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         main_attribute_icon = Image.open(await get_image_from_url(
             f"https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/{i['main_affix']['icon']}")).resize(
             (42, 42))
+
+        relic_score_json = {}
+        if calculating_standard != "compatibility" and calculating_standard != "no_score":
+            relic_score_json = await get_relic_score(helta_json["id"]+"_"+calculating_standard, i)
+        else:
+            relic_score_json = await get_relic_score(helta_json["id"], i)
         relic_score_json = await get_relic_score(helta_json["id"], i)
         relic_score = round(relic_score_json["score"] * 100, 1)
         relic_full_score += relic_score
