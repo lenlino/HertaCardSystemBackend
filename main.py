@@ -66,7 +66,8 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
                     headers={"X-score": str(panel_img["score"]), "X-top-score": score_rank['top_score'],
                              'X-before-score': score_rank['before_score'], 'X-median': score_rank['median'],
                              'X-mean': score_rank['mean'], 'X-rank': score_rank['rank'],
-                             'X-data-count': score_rank['data_count']},
+                             'X-data-count': score_rank['data_count'],
+                             'Access-Control-Allow-Origin': '*'},
                     media_type="image/png")
 
 
