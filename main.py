@@ -24,7 +24,7 @@ root_origins = os.environ.get("ROOT_ORIGINS", "").split(",")
 i18n.load_path.append(f"{os.path.dirname(os.path.abspath(__file__))}/i18n")
 i18n.set('fallback', 'en')
 
-app = FastAPI(docs_url=None)
+app = FastAPI()
 
 origins = [
     "https://herta-hazel.vercel.app/",
@@ -201,11 +201,11 @@ async def put_weight(weight: Weight, chara_id: str):
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
         weight_json = json.load(f)
     changed_weight_json = weight.model_dump()
-    for k, v in changed_weight_json["main"]:
-        for k2, v2 in v:
+    for k, v in changed_weight_json["main"].items():
+        for k2, v2 in v.items():
             if v2 != 0:
                 weight_json[chara_id]["main"][k][k2] = v2
-    for k, v in changed_weight_json["weight"]:
+    for k, v in changed_weight_json["weight"].items():
         if v != 0:
             weight_json[chara_id]["weight"][k] = v
 
