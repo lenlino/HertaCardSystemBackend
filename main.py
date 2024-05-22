@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 import i18n
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse, Response, JSONResponse
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -47,6 +47,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]  # 追記により追加
 )
+
+
+@app.middleware('http')
+async def validate_ip(request: Request, call_next):
+    # Get client IP
+    ip = str(request.client.host)
+
+    # Check if IP is allowed
+    if ip not in root_origins:
+        data = {
+            'message': f'IP {ip} is not allowed to access this resource.'
+        }
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=data)
+
+    # Proceed if IP is allowed
+    return await call_next(request)
 
 
 @app.get("/gen_card/{uid}")
@@ -182,7 +198,15 @@ async def post_weight(weight: Weight, chara_id: str):
 async def put_weight(weight: Weight, chara_id: str):
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
         weight_json = json.load(f)
-    weight_json[chara_id] = weight.model_dump()
+    changed_weight_json = weight.model_dump()
+    for k, v in changed_weight_json["main"]:
+        for k2, v2 in v:
+            if v2 != 0:
+                weight_json[chara_id]["main"][k][k2] = v2
+    for k, v in changed_weight_json["weight"]:
+        if v != 0:
+            weight_json[chara_id]["weight"][k] = v
+
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
         json.dump(weight_json, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
