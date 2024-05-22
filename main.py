@@ -55,7 +55,7 @@ async def validate_ip(request: Request, call_next):
     ip = str(request.client.host)
 
     # Check if IP is allowed
-    if ip not in root_origins:
+    if ip not in root_origins and request.method != "GET":
         data = {
             'message': f'IP {ip} is not allowed to access this resource.'
         }
