@@ -310,7 +310,8 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         skill_index += 1
 
     result = {}
-    result['img'] = img.resize((img.width // 2, img.height // 2))
+    img = img.resize((1280, 720), Image.LANCZOS)
+    result['img'] = img
     result['score'] = relic_full_score
     result['chara_name'] = helta_json['name']
     result['avatar_id'] = helta_json['id']

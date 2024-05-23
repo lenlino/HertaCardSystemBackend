@@ -75,7 +75,7 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
                                                        is_hide_roll=is_hide_roll)
     if "detail" in panel_img:
         raise HTTPException(status_code=panel_img["detail"])
-    panel_img['img'].save(image_binary, 'PNG')
+    panel_img['img'].save(image_binary, 'PNG', optimize=True)
     image_binary.seek(0)
     score_rank = get_score_rank(int(panel_img['avatar_id']), uid, panel_img['score'])
     return Response(content=image_binary.getvalue(),
