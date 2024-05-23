@@ -104,18 +104,20 @@ async def get_json_from_url(uid: str, lang: str):
                         basic_light_cone = None
 
                     basic_relics = []
-                    for relic in characters["relicList"]:
-                        subaffix_list = []
-                        for subaffix in relic["subAffixList"]:
-                            subaffix_list.append(
-                                SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
-                                                  step=subaffix.get("step", 0)))
-                        basic_relics.append(RelicBasicInfo(
-                            id=str(relic["tid"]),
-                            level=relic.get("level", 0),
-                            main_affix_id=str(relic["mainAffixId"]),
-                            sub_affix_info=subaffix_list,
-                        ))
+                    if "relicList" in characters:
+                        for relic in characters["relicList"]:
+                            subaffix_list = []
+                            for subaffix in relic["subAffixList"]:
+                                subaffix_list.append(
+                                    SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
+                                                      step=subaffix.get("step", 0)))
+                            basic_relics.append(RelicBasicInfo(
+                                id=str(relic["tid"]),
+                                level=relic.get("level", 0),
+                                main_affix_id=str(relic["mainAffixId"]),
+                                sub_affix_info=subaffix_list,
+                            ))
+
                     charabase_json = index.get_character_info(CharacterBasicInfo(
                         id=str(characters["avatarId"]),
                         rank=characters.get("rank", 0),
