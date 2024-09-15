@@ -10,6 +10,8 @@ from PIL import Image
 from starrailres import Index
 from starrailres.models.info import CharacterBasicInfo, LevelInfo, LightConeBasicInfo, SubAffixBasicInfo, RelicBasicInfo
 
+import main
+
 conn = aiohttp.TCPConnector(limit_per_host=1)
 
 
@@ -300,6 +302,8 @@ def get_all_weight(chara_id):
         weight_json = json.load(f)
     if chara_id is None:
         return weight_json
+    if str(chara_id) not in weight_json:
+        return {main.Weight()}
     return weight_json[str(chara_id)]
 
 
