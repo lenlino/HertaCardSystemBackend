@@ -98,85 +98,85 @@ async def sr_info_parsed(uid: str, lang: str = "jp"):
 
 
 class Weight1(BaseModel):
-    HPDelta: float
+    HPDelta: float = 0.0
 
 
 class Weight2(BaseModel):
-    AttackDelta: float
+    AttackDelta: float = 0.0
 
 
 class Weight3(BaseModel):
-    HPAddedRatio: float
-    AttackAddedRatio: float
-    DefenceAddedRatio: float
-    CriticalChanceBase: float
-    CriticalDamageBase: float
-    HealRatioBase: float
-    StatusProbabilityBase: float
+    HPAddedRatio: float = 0.0
+    AttackAddedRatio: float = 0.0
+    DefenceAddedRatio: float = 0.0
+    CriticalChanceBase: float = 0.0
+    CriticalDamageBase: float = 0.0
+    HealRatioBase: float = 0.0
+    StatusProbabilityBase: float = 0.0
 
 
 class Weight4(BaseModel):
-    HPAddedRatio: float
-    AttackAddedRatio: float
-    DefenceAddedRatio: float
-    SpeedDelta: float
+    HPAddedRatio: float = 0.0
+    AttackAddedRatio: float = 0.0
+    DefenceAddedRatio: float = 0.0
+    SpeedDelta: float = 0.0
 
 
 class Weight5(BaseModel):
-    HPAddedRatio: float
-    AttackAddedRatio: float
-    DefenceAddedRatio: float
-    PhysicalAddedRatio: float
-    FireAddedRatio: float
-    IceAddedRatio: float
-    ThunderAddedRatio: float
-    WindAddedRatio: float
-    QuantumAddedRatio: float
-    ImaginaryAddedRatio: float
+    HPAddedRatio: float = 0.0
+    AttackAddedRatio: float = 0.0
+    DefenceAddedRatio: float = 0.0
+    PhysicalAddedRatio: float = 0.0
+    FireAddedRatio: float = 0.0
+    IceAddedRatio: float = 0.0
+    ThunderAddedRatio: float = 0.0
+    WindAddedRatio: float = 0.0
+    QuantumAddedRatio: float = 0.0
+    ImaginaryAddedRatio: float = 0.0
 
 
 class Weight6(BaseModel):
-    BreakDamageAddedRatioBase: float
-    SPRatioBase: float
-    HPAddedRatio: float
-    AttackAddedRatio: float
-    DefenceAddedRatio: float
+    BreakDamageAddedRatioBase: float = 0.0
+    SPRatioBase: float = 0.0
+    HPAddedRatio: float = 0.0
+    AttackAddedRatio: float = 0.0
+    DefenceAddedRatio: float = 0.0
 
 
 class WeightSub(BaseModel):
-    HPDelta: float
-    AttackDelta: float
-    DefenceDelta: float
-    HPAddedRatio: float
-    AttackAddedRatio: float
-    DefenceAddedRatio: float
-    SpeedDelta: float
-    CriticalChanceBase: float
-    CriticalDamageBase: float
-    StatusProbabilityBase: float
-    StatusResistanceBase: float
-    BreakDamageAddedRatioBase: float
+    HPDelta: float = 0.0
+    AttackDelta: float = 0.0
+    DefenceDelta: float = 0.0
+    HPAddedRatio: float = 0.0
+    AttackAddedRatio: float = 0.0
+    DefenceAddedRatio: float = 0.0
+    SpeedDelta: float = 0.0
+    CriticalChanceBase: float = 0.0
+    CriticalDamageBase: float = 0.0
+    StatusProbabilityBase: float = 0.0
+    StatusResistanceBase: float = 0.0
+    BreakDamageAddedRatioBase: float = 0.0
 
 
 class WeightMain(BaseModel):
-    w1: Weight1
-    w2: Weight2
-    w3: Weight3
-    w4: Weight4
-    w5: Weight5
-    w6: Weight6
+    w1: Weight1 = Weight1()
+    w2: Weight2 = Weight2()
+    w3: Weight3 = Weight3()
+    w4: Weight4 = Weight4()
+    w5: Weight5 = Weight5()
+    w6: Weight6 = Weight6()
 
 
 class Lang(BaseModel):
-    jp: str
-    en: str
+    jp: str = ""
+    en: str = ""
 
 
 class Weight(BaseModel):
-    main: WeightMain
-    weight: WeightSub
-    max: float
-    lang: Lang
+    main: WeightMain = WeightMain()
+    weight: WeightSub = WeightSub()
+    max: float = 0.0
+    lang: Lang = Lang()
 
 
 @app.get("/weight/{chara_id}")
