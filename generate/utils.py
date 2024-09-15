@@ -303,7 +303,6 @@ def get_all_weight(chara_id):
     if chara_id is None:
         return weight_json
     if str(chara_id) not in weight_json:
-        print(main.Weight().model_dump_json())
         return main.Weight().model_dump_json()
     return weight_json[str(chara_id)]
 
