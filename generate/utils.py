@@ -179,6 +179,15 @@ async def get_relic_score(chara_id, relic_json):
     result_json = {}
 
     # メインの計算
+    if chara_id not in weight_json:
+        result_json["main_formula"] = "-"
+        result_json["score"] = 0
+        sub_affix_formulas = []
+        for sub_affix_json in relic_json["sub_affix"]:
+            sub_affix_formulas.append(f'-')
+        result_json["sub_formulas"] = sub_affix_formulas
+        return result_json
+
     main_weight = weight_json[chara_id]["main"]["w" + relic_id_json.get(relic_json["id"], relic_json["id"])[-1]][
         relic_json["main_affix"]["type"]]
     main_affix_score = (relic_json["level"] + 1) / 16 * main_weight
