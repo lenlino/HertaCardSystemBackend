@@ -319,9 +319,11 @@ def get_score_rank(chara_id, uid, score, calculation_value="compatibility"):
         df = pd.DataFrame({"score": {}, "rank": {}})
     uid = str(uid) + 'u'
     before_score = df["score"].get(uid, 0)
+    df.loc[uid, "score"] = score
+    df.loc[uid, "rank"] = 0
     df['rank'] = df['score'].rank(ascending=False, method='min')
     if before_score > score:
-        df[uid, "score"] = before_score
+        df.loc[uid, "score"] = before_score
         result['top_score'] = str(round(before_score, 1))
     else:
         result['top_score'] = str(round(score, 1))

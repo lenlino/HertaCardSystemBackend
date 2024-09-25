@@ -148,6 +148,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
             relic_score_json = await get_relic_score(helta_json["id"]+"_"+calculating_standard, i)
         else:
             relic_score_json = await get_relic_score(helta_json["id"], i)
+        relic_score_json = await get_relic_score(helta_json["id"], i)
         relic_score = round(relic_score_json["score"] * 100, 1)
         relic_full_score += relic_score
         relic_main_affix_name = '\n'.join(textwrap.wrap(i['main_affix']['name'], relic_main_affix_name_limit))
