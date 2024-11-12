@@ -210,7 +210,8 @@ async def get_relic_score(chara_id, relic_json):
 
     result_json["score"] = main_affix_score * 0.5 + sub_affix_score * 0.5
     result_json["sub_formulas"] = sub_affix_formulas
-    result_json["name"] = weight_json[chara_id]["lang"]["jp"]
+    if "lang" in weight_json[chara_id]:
+        result_json["name"] = weight_json[chara_id]["lang"]["jp"]
 
     # 合計
     return result_json
