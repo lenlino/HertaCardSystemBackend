@@ -238,8 +238,12 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
                   font=card_font)
         draw.text((380, 920), f"{get_relic_full_score_text(relic_full_score)}", font_color,
                   font=title_font, anchor="mm")
-        draw.text((80, 930), i18n.t('message.compatibility_criteria', locale=lang), font_color,
-                  font=card_font)
+        if calculating_standard != "compatibility":
+            draw.text((80, 930), relic_score_json["name"], font_color,
+                      font=card_font)
+        else:
+            draw.text((80, 930), i18n.t('message.compatibility_criteria', locale=lang), font_color,
+                      font=card_font)
     else:
         for sets_index, sets in enumerate(helta_json["relic_sets"]):
             draw.text((80, 865 + sets_index * 40), f"{sets['num']} - {sets['name']}", font_color,
