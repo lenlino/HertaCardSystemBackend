@@ -171,8 +171,8 @@ def convert_old_roman_from_int(n):
 
 
 async def get_relic_score(chara_id, relic_json):
-    if chara_id >= 8000 and chara_id%2 == 0:
-        chara_id = chara_id - 1
+    if int(chara_id) >= 8000 and int(chara_id)%2 == 0:
+        chara_id = int(chara_id) - 1
     # load
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
         weight_json = json.load(f)
