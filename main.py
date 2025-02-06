@@ -242,7 +242,6 @@ async def update_weight_task():
 @app.on_event("startup")
 async def skd_process():
     scheduler = AsyncIOScheduler()
-    i18n.set('fallback', 'en')
     scheduler.add_job(remove_temp_task, "interval", minutes=1)
     scheduler.add_job(update_weight_task, "interval", minutes=60)
     os.chdir(f"{os.path.dirname(os.path.abspath(__file__))}/generate")
