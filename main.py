@@ -82,6 +82,9 @@ async def validate_ip(request: Request, call_next):
     # Proceed if IP is allowed
     return await call_next(request)
 
+@app.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
 
 @app.get("/gen_card/{uid}")
 async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_hide_roll: bool = False,
