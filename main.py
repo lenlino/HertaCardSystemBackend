@@ -27,7 +27,7 @@ i18n.set('locale', 'jp')
 i18n.set('fallback', 'en')
 
 sentry_sdk.init(
-    dsn="https://721ea27ff14eb64484c935ca332eb246@o4509235174768640.ingest.us.sentry.io/4509235186892800",
+    dsn="https://0ee532176ffe249bd861011163b64f90@o4509235174768640.ingest.us.sentry.io/4509235226279936",
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
