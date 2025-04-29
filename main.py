@@ -7,6 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
+import sentry_sdk
 
 import i18n
 from fastapi import FastAPI, HTTPException, Request, status
@@ -23,6 +24,13 @@ root_origins = os.environ.get("ROOT_ORIGINS", "").split(",")
 
 i18n.load_path.append(f"{os.path.dirname(os.path.abspath(__file__))}/i18n")
 i18n.set('fallback', 'en')
+
+sentry_sdk.init(
+    dsn="https://721ea27ff14eb64484c935ca332eb246@o4509235174768640.ingest.us.sentry.io/4509235186892800",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
 
 app = FastAPI()
 
