@@ -23,6 +23,7 @@ load_dotenv()
 root_origins = os.environ.get("ROOT_ORIGINS", "").split(",")
 
 i18n.load_path.append(f"{os.path.dirname(os.path.abspath(__file__))}/i18n")
+i18n.set('locale', 'jp')
 i18n.set('fallback', 'en')
 
 sentry_sdk.init(

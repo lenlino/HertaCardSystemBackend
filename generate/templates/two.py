@@ -15,6 +15,7 @@ from generate.utils import get_json_from_url, get_json_from_json, get_image_from
 font_file_path = f"{get_file_path()}/assets/zh-cn.ttf"
 
 
+
 async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculating_standard="compatibility",
                          lang="jp", is_hide_roll=False):
     font_color = "#f0eaca"
