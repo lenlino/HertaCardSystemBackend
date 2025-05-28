@@ -195,6 +195,7 @@ class Lang(BaseModel):
 
 class RelicSetWeight(BaseModel):
     id: str = ""
+    num: int = 2
     weight: float = 0.0
 
 class Weight(BaseModel):
@@ -244,7 +245,7 @@ async def put_weight(weight: Weight, chara_id: str):
         for relic_set in changed_weight_json["relic_sets"]:
             found = False
             for i, existing_set in enumerate(weight_json[chara_id]["relic_sets"]):
-                if existing_set["id"] == relic_set["id"]:
+                if existing_set["id"] == relic_set["id"] and existing_set["num"] == relic_set["num"]:
                     weight_json[chara_id]["relic_sets"][i] = relic_set
                     found = True
                     break

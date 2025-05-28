@@ -294,16 +294,18 @@ async def get_relic_sets_score(chara_id, relic_sets):
 
     for relic_set in relic_sets:
         set_id = relic_set["id"]
+        set_num = relic_set["num"]
         set_score = 0
 
         # Find weight for this set
         for weight_set in weight_json[chara_id]["relic_sets"]:
-            if weight_set["id"] == set_id:
+            if weight_set["id"] == set_id and weight_set["num"] == set_num:
                 set_score = weight_set["weight"]
                 break
 
         set_scores.append({
             "id": set_id,
+            "num": set_num,
             "name": relic_set["name"],
             "score": set_score
         })
