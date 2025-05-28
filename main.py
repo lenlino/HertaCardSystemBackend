@@ -193,11 +193,16 @@ class Lang(BaseModel):
     en: str = ""
 
 
+class RelicSetWeight(BaseModel):
+    id: str = ""
+    weight: float = 0.0
+
 class Weight(BaseModel):
     main: WeightMain = WeightMain()
     weight: WeightSub = WeightSub()
     max: float = 0.0
     lang: Lang = Lang()
+    relic_sets: list[RelicSetWeight] = []
 
 
 @app.get("/weight/{chara_id}")
@@ -229,6 +234,22 @@ async def put_weight(weight: Weight, chara_id: str):
     for k, v in changed_weight_json["weight"].items():
         if v != -1:
             weight_json[chara_id]["weight"][k] = v
+
+    # Handle relic_sets updates
+    if "relic_sets" in changed_weight_json and changed_weight_json["relic_sets"]:
+        if "relic_sets" not in weight_json[chara_id]:
+            weight_json[chara_id]["relic_sets"] = []
+
+        # Update existing relic sets or add new ones
+        for relic_set in changed_weight_json["relic_sets"]:
+            found = False
+            for i, existing_set in enumerate(weight_json[chara_id]["relic_sets"]):
+                if existing_set["id"] == relic_set["id"]:
+                    weight_json[chara_id]["relic_sets"][i] = relic_set
+                    found = True
+                    break
+            if not found:
+                weight_json[chara_id]["relic_sets"].append(relic_set)
 
     with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:

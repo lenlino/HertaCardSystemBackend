@@ -267,6 +267,62 @@ def get_relic_full_score_text(score):
         return "OP"
 
 
+async def get_relic_sets_score(chara_id, relic_sets):
+    chara_id_number = chara_id.split("_")[0]
+    if int(chara_id_number) >= 8000 and int(chara_id_number)%2 == 0:
+        chara_id.replace(chara_id_number, str(int(chara_id_number) - 1))
+
+    # load
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailScore/score.json") as f:
+        weight_json = json.load(f)
+
+    result_json = {}
+
+    # Check if character exists in weight_json
+    if chara_id not in weight_json:
+        result_json["score"] = 0
+        return result_json
+
+    # Check if relic_sets weights exist for this character
+    if "relic_sets" not in weight_json[chara_id]:
+        result_json["score"] = 0
+        return result_json
+
+    # Calculate score for each relic set
+    total_score = 0
+    set_scores = []
+
+    for relic_set in relic_sets:
+        set_id = relic_set["id"]
+        set_score = 0
+
+        # Find weight for this set
+        for weight_set in weight_json[chara_id]["relic_sets"]:
+            if weight_set["id"] == set_id:
+                set_score = weight_set["weight"]
+                break
+
+        set_scores.append({
+            "id": set_id,
+            "name": relic_set["name"],
+            "score": set_score
+        })
+
+        total_score += set_score
+
+    # Ensure the maximum score for relic_sets is 30 points
+    if total_score > 30:
+        total_score = 30
+
+    result_json["score"] = total_score
+    result_json["set_scores"] = set_scores
+
+    if "lang" in weight_json[chara_id]:
+        result_json["name"] = weight_json[chara_id]["lang"]["jp"]
+
+    return result_json
+
+
 def get_mihomo_lang(discord_lang):
     if discord_lang == "id":
         return "id"

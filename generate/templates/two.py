@@ -10,7 +10,8 @@ import i18n
 from PIL import ImageDraw, Image, ImageFont
 
 from generate.utils import get_json_from_url, get_json_from_json, get_image_from_url, get_relic_score_text, \
-    get_star_image_path_from_int, convert_old_roman_from_int, get_relic_score, get_file_path, get_relic_full_score_text
+    get_star_image_path_from_int, convert_old_roman_from_int, get_relic_score, get_file_path, get_relic_full_score_text, \
+    get_relic_sets_score
 
 font_file_path = f"{get_file_path()}/assets/zh-cn.ttf"
 
@@ -235,7 +236,17 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
     draw.rounded_rectangle((50, 840, 450, 1000), radius=2, fill=None,
                            outline=font_color, width=1)
     if calculating_standard != "no_score":
-        draw.text((80, 870), f"{i18n.t('message.score', locale=lang)}{round(relic_full_score, 1)}", font_color,
+        # Calculate relic sets score
+        relic_sets_score_json = {}
+        if calculating_standard != "compatibility" and calculating_standard != "no_score":
+            relic_sets_score_json = await get_relic_sets_score(helta_json["id"]+"_"+calculating_standard, helta_json["relic_sets"])
+        else:
+            relic_sets_score_json = await get_relic_sets_score(helta_json["id"], helta_json["relic_sets"])
+
+        relic_sets_score = relic_sets_score_json.get("score", 0)
+        total_score = round(relic_full_score + relic_sets_score, 1)
+
+        draw.text((80, 870), f"{i18n.t('message.score', locale=lang)}{round(total_score, 1)}", font_color,
                   font=card_font)
         draw.text((380, 920), f"{get_relic_full_score_text(relic_full_score)}", font_color,
                   font=title_font, anchor="mm")
