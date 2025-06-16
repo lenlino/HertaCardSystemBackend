@@ -235,6 +235,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
     # relic合計スコアor遺物組み合わせ
     draw.rounded_rectangle((50, 840, 450, 1000), radius=2, fill=None,
                            outline=font_color, width=1)
+    total_score = 0
     if calculating_standard != "no_score":
         # Calculate relic sets score
         relic_sets_score_json = {}
