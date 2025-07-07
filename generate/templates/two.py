@@ -314,10 +314,11 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
             if used_normal:
                 continue
             used_normal = True
-        skill_icon = Image.open(await get_image_from_url(
+        if i['icon'] is not None:
+            skill_icon = Image.open(await get_image_from_url(
             f"https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/{i['icon']}")).resize(
             (45, 45))
-        img.paste(skill_icon, (70 + skill_index * 78, 722), skill_icon)
+            img.paste(skill_icon, (70 + skill_index * 78, 722), skill_icon)
         draw.ellipse(((65 + skill_index * 78, 715), (120 + skill_index * 78, 770)), fill=None,
                      outline=font_color, width=3)
         draw.rounded_rectangle((73 + skill_index * 78, 762, 112 + skill_index * 78, 788), radius=4, fill="#ffffff")
