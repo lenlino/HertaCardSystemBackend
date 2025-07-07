@@ -124,7 +124,7 @@ async def get_json_from_url(uid: str, lang: str):
                         id=str(characters["avatarId"]),
                         rank=characters.get("rank", 0),
                         level=characters["level"],
-                        promotion=characters["promotion"],
+                        promotion=characters.get("promotion", 0),
                         skill_tree_levels=skill_list,
                         light_cone=basic_light_cone,
                         relics=basic_relics,
