@@ -3,6 +3,7 @@ import io
 import json
 import os
 
+import aiofiles
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -81,6 +82,13 @@ async def validate_ip(request: Request, call_next):
 
     # Proceed if IP is allowed
     return await call_next(request)
+
+@app.get("/get_chara")
+async def get_chara(lang: str = "jp"):
+    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailRes/index_min/{lang}/characters.json", mode='r',
+              encoding='utf-8') as f:
+        contents = await f.read()
+    return JSONResponse(content=json.loads(contents))
 
 @app.get("/sentry-debug")
 async def trigger_error():
