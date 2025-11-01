@@ -222,10 +222,11 @@ async def weight(chara_id: str):
 
 @app.post("/weight/{chara_id}")
 async def post_weight(weight: Weight, chara_id: str):
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
-        weight_json = json.load(f)
+    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
+        content = await f.read()
+        weight_json = json.load(content)
     weight_json[chara_id] = weight.model_dump()
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
+    with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
         json.dump(weight_json, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
     return {"done": True}
@@ -233,7 +234,7 @@ async def post_weight(weight: Weight, chara_id: str):
 
 @app.put("/weight/{chara_id}")
 async def put_weight(weight: Weight, chara_id: str):
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
+    with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
         weight_json = json.load(f)
     changed_weight_json = weight.model_dump()
     for k, v in changed_weight_json["main"].items():
@@ -260,7 +261,7 @@ async def put_weight(weight: Weight, chara_id: str):
             if not found:
                 weight_json[chara_id]["relic_sets"].append(relic_set)
 
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
+    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
         json.dump(weight_json, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
     return {"done": True}
