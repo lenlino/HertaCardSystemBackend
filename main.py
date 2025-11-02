@@ -90,6 +90,13 @@ async def get_chara(lang: str = "jp"):
         contents = await f.read()
     return JSONResponse(content=json.loads(contents))
 
+@app.get("/get_set_relic")
+async def get_set_relic(lang: str = "jp"):
+    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailRes/index_min/{lang}/relic_sets.json", mode='r',
+              encoding='utf-8') as f:
+        contents = await f.read()
+    return JSONResponse(content=json.loads(contents))
+
 @app.get("/sentry-debug")
 async def trigger_error():
     division_by_zero = 1 / 0
