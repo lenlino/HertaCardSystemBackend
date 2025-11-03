@@ -49,7 +49,7 @@ origins = [
     "https://herta-hazel.vercel.app/",
     "http://localhost",
     "http://localhost:8080",
-    "https://tools.lenlino.com/"
+    "https://tools.lenlino.com"
 ]
 
 app.add_middleware(
