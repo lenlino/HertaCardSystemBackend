@@ -48,7 +48,8 @@ app = FastAPI()
 origins = [
     "https://herta-hazel.vercel.app/",
     "http://localhost",
-    "http://localhost:8080"
+    "http://localhost:8080",
+    "https://tools.lenlino.com/"
 ]
 
 app.add_middleware(
