@@ -232,7 +232,7 @@ async def weight(chara_id: str):
 async def post_weight(weight: Weight, chara_id: str):
     async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
         content = await f.read()
-        weight_json = json.load(content)
+        weight_json = json.loads(content)
     weight_json[chara_id] = weight.model_dump()
     async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
@@ -243,7 +243,8 @@ async def post_weight(weight: Weight, chara_id: str):
 @app.put("/weight/{chara_id}")
 async def put_weight(weight: Weight, chara_id: str):
     async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json") as f:
-        weight_json = json.load(await f.read())
+        content = await f.read()
+        weight_json = json.loads(content)
     changed_weight_json = weight.model_dump()
     for k, v in changed_weight_json["main"].items():
         for k2, v2 in v.items():
