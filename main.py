@@ -234,7 +234,7 @@ async def post_weight(weight: Weight, chara_id: str):
         content = await f.read()
         weight_json = json.loads(content)
     weight_json[chara_id] = weight.model_dump()
-    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
         json.dump(weight_json, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
     return {"done": True}
@@ -270,7 +270,7 @@ async def put_weight(weight: Weight, chara_id: str):
             if not found:
                 weight_json[chara_id]["relic_sets"].append(relic_set)
 
-    async with aiofiles.open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
+    with open(f"{os.path.dirname(os.path.abspath(__file__))}/generate/StarRailScore/score.json", 'wt',
               encoding='utf-8') as f:
         json.dump(weight_json, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
     return {"done": True}
