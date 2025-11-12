@@ -148,7 +148,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         relic_score_json = {}
         if calculating_standard != "compatibility" and calculating_standard != "no_score":
             relic_score_json = await get_relic_score(helta_json["id"]+"_"+calculating_standard, i)
-        if relic_score_json == {}:
+        else:
             relic_score_json = await get_relic_score(helta_json["id"], i)
         relic_score = round(relic_score_json["score"] * 100, 1)
         relic_full_score += relic_score
@@ -252,7 +252,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
         draw.text((380, 920), f"{get_relic_full_score_text(relic_full_score)}", font_color,
                   font=title_font, anchor="mm")
         if calculating_standard != "compatibility":
-            draw.text((80, 930), relic_score_json["name"], font_color,
+            draw.text((80, 930), relic_score_json.get(["name"], i18n.t('message.compatibility_criteria', locale=lang)), font_color,
                       font=card_font)
         else:
             draw.text((80, 930), i18n.t('message.compatibility_criteria', locale=lang), font_color,
