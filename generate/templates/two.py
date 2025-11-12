@@ -146,7 +146,7 @@ async def generate_panel(uid="805477392", chara_id=1, is_hideUID=False, calculat
             (42, 42))
 
         relic_score_json = {}
-        if calculating_standard != "compatibility" and calculating_standard != "no_score":
+        if calculating_standard != "compatibility" and calculating_standard != "no_score" and calculating_standard != "string":
             relic_score_json = await get_relic_score(helta_json["id"]+"_"+calculating_standard, i)
         else:
             relic_score_json = await get_relic_score(helta_json["id"], i)
