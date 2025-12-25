@@ -114,7 +114,7 @@ async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_h
         raise HTTPException(status_code=panel_img["detail"])
     panel_img['img'].save(image_binary, 'PNG', optimize=True)
     image_binary.seek(0)
-    score_rank = get_score_rank(int(panel_img['avatar_id']), uid, panel_img['score'])
+    score_rank = get_score_rank(int(panel_img['avatar_id']), uid, panel_img['score'], calculation_value=calculation_value)
     return Response(content=image_binary.getvalue(),
                     headers={"X-score": str(panel_img["score"]), "X-top-score": score_rank['top_score'],
                              'X-before-score': score_rank['before_score'], 'X-median': score_rank['median'],
