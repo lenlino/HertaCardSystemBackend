@@ -282,7 +282,33 @@ async def get_weight_list(chara_id: str):
     weight_list = {}
     for key, value in result.items():
         if key.startswith(chara_id):
-            weight_list[key] = value
+            # スコアの登録数を取得
+            key_parts = key.split("_")
+            avatar_id = key_parts[0]
+
+            # calculation_value を判定
+            if len(key_parts) > 1 and key_parts[1] not in ["compatibility", "no_score"]:
+                calculation_value = key_parts[1]
+                json_path = f"{os.path.dirname(os.path.abspath(__file__))}/generate/scores/{avatar_id}_{calculation_value}.json"
+            else:
+                json_path = f"{os.path.dirname(os.path.abspath(__file__))}/generate/scores/{avatar_id}.json"
+
+            # データ数を取得
+            if os.path.exists(json_path):
+                try:
+                    import pandas as pd
+                    df = pd.read_json(json_path, orient='columns')
+                    data_count = len(df)
+                except:
+                    data_count = 0
+            else:
+                data_count = 0
+
+            # valueに登録数を追加
+            value_with_count = value.copy() if isinstance(value, dict) else value
+            if isinstance(value_with_count, dict):
+                value_with_count["data_count"] = data_count
+            weight_list[key] = value_with_count
     return JSONResponse(content=jsonable_encoder(weight_list))
 
 
