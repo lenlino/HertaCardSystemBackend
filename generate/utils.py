@@ -52,6 +52,7 @@ async def get_json_from_url(uid: str, lang: str):
         print(e)
 
     if len(result_json.keys()) == 0 or "detail" in result_json:
+        uid = uid.replace("_enka", "")
         filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
         index = Index(filepath)
         async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
