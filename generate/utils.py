@@ -138,6 +138,7 @@ async def get_json_from_url(uid: str, lang: str):
         except Exception as e:
             print("timeout enka?")
             print(e)
+            result_json["detail"] = 408
     temp_in_json = {"expires": (dt_now + datetime.timedelta(minutes=1)), "result": result_json}
     temp_json[uid] = temp_in_json
 
