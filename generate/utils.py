@@ -56,7 +56,7 @@ async def get_json_from_url(uid: str, lang: str):
         filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
         index = Index(filepath)
         async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-            async with session.get(f"https://enka.network/api/hsr/uid/{uid}") as response:
+            async with session.get(f"https://enka.network/api/hsr/uid/{uid}", timeout=7) as response:
                 if response.status != 200:
                     result_json["detail"] = response.status
                     return result_json
