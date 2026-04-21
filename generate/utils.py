@@ -55,85 +55,89 @@ async def get_json_from_url(uid: str, lang: str):
         uid = uid.replace("_enka", "")
         filepath = pathlib.Path(f"{os.path.dirname(os.path.abspath(__file__))}/StarRailRes/index_min/{lang}")
         index = Index(filepath)
-        async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
-            async with session.get(f"https://enka.network/api/hsr/uid/{uid}", timeout=7) as response:
-                if response.status != 200:
-                    result_json["detail"] = response.status
-                    return result_json
-                enka_result_json = await response.json()
-                detail_info_json = enka_result_json["detailInfo"]
-                record_info_json = detail_info_json["recordInfo"]
-                result_json = {
-                    "player": {
-                        "uid": enka_result_json["uid"],
-                        "nickname": detail_info_json["nickname"],
-                        "level": detail_info_json["level"],
-                        "world_level": detail_info_json["worldLevel"],
-                        "friend_count": detail_info_json["friendCount"],
-                        "avatar": index.get_avatar_info(detail_info_json["headIcon"]),
-                        "signature": detail_info_json.get("signature", ""),
-                        "is_display": detail_info_json.get("isDisplayAvatar", True),
-                        "space_info": {
-                            "memory_data": {
-                                "level": record_info_json.get("scheduleMaxLevel", 0),
-                                "chaos_id": 0,
-                                "chaos_level": 0
-                            },
-                            "universe_level": record_info_json["maxRogueChallengeScore"],
-                            "challenge_data": {
-                                "maze_group_id": 0,
-                                "maze_group_index": 0,
-                                "pre_maze_group_index": record_info_json.get("scheduleMaxLevel", 0)
-                            },
-                            "pass_area_progress": record_info_json["maxRogueChallengeScore"],
-                            "light_cone_count": record_info_json["equipmentCount"],
-                            "avatar_count": record_info_json["avatarCount"],
-                            "achievement_count": record_info_json["achievementCount"]
+        try:
+            async with aiohttp.ClientSession(connector_owner=False, connector=conn) as session:
+                async with session.get(f"https://enka.network/api/hsr/uid/{uid}", timeout=7) as response:
+                    if response.status != 200:
+                        result_json["detail"] = response.status
+                        return result_json
+                    enka_result_json = await response.json()
+                    detail_info_json = enka_result_json["detailInfo"]
+                    record_info_json = detail_info_json["recordInfo"]
+                    result_json = {
+                        "player": {
+                            "uid": enka_result_json["uid"],
+                            "nickname": detail_info_json["nickname"],
+                            "level": detail_info_json["level"],
+                            "world_level": detail_info_json["worldLevel"],
+                            "friend_count": detail_info_json["friendCount"],
+                            "avatar": index.get_avatar_info(detail_info_json["headIcon"]),
+                            "signature": detail_info_json.get("signature", ""),
+                            "is_display": detail_info_json.get("isDisplayAvatar", True),
+                            "space_info": {
+                                "memory_data": {
+                                    "level": record_info_json.get("scheduleMaxLevel", 0),
+                                    "chaos_id": 0,
+                                    "chaos_level": 0
+                                },
+                                "universe_level": record_info_json["maxRogueChallengeScore"],
+                                "challenge_data": {
+                                    "maze_group_id": 0,
+                                    "maze_group_index": 0,
+                                    "pre_maze_group_index": record_info_json.get("scheduleMaxLevel", 0)
+                                },
+                                "pass_area_progress": record_info_json["maxRogueChallengeScore"],
+                                "light_cone_count": record_info_json["equipmentCount"],
+                                "avatar_count": record_info_json["avatarCount"],
+                                "achievement_count": record_info_json["achievementCount"]
+                            }
                         }
                     }
-                }
-                characters_list = []
-                for characters in detail_info_json["avatarDetailList"]:
-                    skill_list = []
-                    for skilltree in characters["skillTreeList"]:
-                        skill_list.append(LevelInfo(id=str(skilltree["pointId"]), level=int(skilltree["level"])))
+                    characters_list = []
+                    for characters in detail_info_json["avatarDetailList"]:
+                        skill_list = []
+                        for skilltree in characters["skillTreeList"]:
+                            skill_list.append(LevelInfo(id=str(skilltree["pointId"]), level=int(skilltree["level"])))
 
-                    if "equipment" in characters:
-                        equipment = characters["equipment"]
-                        basic_light_cone = LightConeBasicInfo(id=str(equipment["tid"]), rank=int(equipment["rank"]),
-                                                              level=int(equipment["level"]),
-                                                              promotion=int(equipment.get("promotion", 0)))
-                    else:
-                        basic_light_cone = None
+                        if "equipment" in characters:
+                            equipment = characters["equipment"]
+                            basic_light_cone = LightConeBasicInfo(id=str(equipment["tid"]), rank=int(equipment["rank"]),
+                                                                  level=int(equipment["level"]),
+                                                                  promotion=int(equipment.get("promotion", 0)))
+                        else:
+                            basic_light_cone = None
 
-                    basic_relics = []
-                    if "relicList" in characters:
-                        for relic in characters["relicList"]:
-                            subaffix_list = []
-                            for subaffix in relic["subAffixList"]:
-                                subaffix_list.append(
-                                    SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
-                                                      step=subaffix.get("step", 0)))
-                            basic_relics.append(RelicBasicInfo(
-                                id=str(relic["tid"]),
-                                level=relic.get("level", 0),
-                                main_affix_id=str(relic["mainAffixId"]),
-                                sub_affix_info=subaffix_list,
-                            ))
+                        basic_relics = []
+                        if "relicList" in characters:
+                            for relic in characters["relicList"]:
+                                subaffix_list = []
+                                for subaffix in relic["subAffixList"]:
+                                    subaffix_list.append(
+                                        SubAffixBasicInfo(id=str(subaffix["affixId"]), cnt=subaffix.get("cnt", 0),
+                                                          step=subaffix.get("step", 0)))
+                                basic_relics.append(RelicBasicInfo(
+                                    id=str(relic["tid"]),
+                                    level=relic.get("level", 0),
+                                    main_affix_id=str(relic["mainAffixId"]),
+                                    sub_affix_info=subaffix_list,
+                                ))
 
-                    charabase_json = index.get_character_info(CharacterBasicInfo(
-                        id=str(characters["avatarId"]),
-                        rank=characters.get("rank", 0),
-                        level=characters["level"],
-                        promotion=characters.get("promotion", 0),
-                        skill_tree_levels=skill_list,
-                        light_cone=basic_light_cone,
-                        relics=basic_relics,
-                    ))
-                    if charabase_json:
-                        from msgspec import to_builtins
-                        characters_list.append(to_builtins(charabase_json))
-                result_json["characters"] = characters_list
+                        charabase_json = index.get_character_info(CharacterBasicInfo(
+                            id=str(characters["avatarId"]),
+                            rank=characters.get("rank", 0),
+                            level=characters["level"],
+                            promotion=characters.get("promotion", 0),
+                            skill_tree_levels=skill_list,
+                            light_cone=basic_light_cone,
+                            relics=basic_relics,
+                        ))
+                        if charabase_json:
+                            from msgspec import to_builtins
+                            characters_list.append(to_builtins(charabase_json))
+                    result_json["characters"] = characters_list
+        except Exception as e:
+            print("timeout enka?")
+            print(e)
     temp_in_json = {"expires": (dt_now + datetime.timedelta(minutes=1)), "result": result_json}
     temp_json[uid] = temp_in_json
 
