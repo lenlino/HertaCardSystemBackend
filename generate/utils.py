@@ -376,6 +376,14 @@ def get_all_weight(chara_id):
     return weight_json[str(chara_id)]
 
 
+def get_score_json_path(chara_id, calculation_value="compatibility"):
+    if not str(chara_id).isdigit() or not calculation_value.replace("_", "").isalnum():
+        return None
+    if calculation_value != "compatibility" and calculation_value != "no_score":
+        return f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}_{calculation_value}.json"
+    return f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}.json"
+
+
 def get_score_rank(chara_id, uid, score, calculation_value="compatibility"):
     if calculation_value != "compatibility" and calculation_value != "no_score":
         json_path = f"{os.path.dirname(os.path.abspath(__file__))}/scores/{chara_id}_{calculation_value}.json"

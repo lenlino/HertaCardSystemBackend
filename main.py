@@ -1,9 +1,11 @@
 import datetime
 import io
 import json
+import math
 import os
 
 import aiofiles
+import pandas as pd
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -310,6 +312,49 @@ async def get_weight_list(chara_id: str):
                 value_with_count["data_count"] = data_count
             weight_list[key] = value_with_count
     return JSONResponse(content=jsonable_encoder(weight_list))
+
+
+# 指定スコア以上の登録を削除する
+@app.delete("/scores/{chara_id}")
+async def delete_scores(chara_id: str, min_score: float, calculation_value: str = "compatibility"):
+    json_path = generate.utils.get_score_json_path(chara_id, calculation_value)
+    if json_path is None:
+        raise HTTPException(status_code=400)
+    if not os.path.exists(json_path):
+        return {"done": True, "count": 0}
+    df = pd.read_json(json_path, orient='columns')
+    kept = df[df['score'] < min_score].copy()
+    kept['rank'] = kept['score'].rank(ascending=False, method='min')
+    kept.to_json(json_path)
+    return {"done": True, "count": len(df) - len(kept)}
+
+
+# スコア分布（ヒストグラム）を返す
+@app.get("/scores/{chara_id}/distribution")
+async def get_score_distribution(chara_id: str, calculation_value: str = "compatibility", bins: int = 20,
+                                 min_score: float = None):
+    json_path = generate.utils.get_score_json_path(chara_id, calculation_value)
+    if json_path is None or not 1 <= bins <= 100:
+        raise HTTPException(status_code=400)
+    df = pd.read_json(json_path, orient='columns') if os.path.exists(json_path) else pd.DataFrame()
+    if len(df) == 0:
+        return {"count": 0, "bin_width": 0, "bins": [], "above": 0}
+    scores = df['score']
+    width = max(1, math.ceil((scores.max() - scores.min()) / bins))
+    start = math.floor(scores.min() / width) * width
+    counts = ((scores - start) // width).astype(int).value_counts()
+    result = {
+        "count": len(scores),
+        "mean": round(float(scores.mean()), 1),
+        "median": round(float(scores.median()), 1),
+        "max": round(float(scores.max()), 1),
+        "bin_width": width,
+        "bins": [{"start": start + i * width, "count": int(counts.get(i, 0))}
+                 for i in range(int(counts.index.max()) + 1)],
+    }
+    if min_score is not None:
+        result["above"] = int((scores >= min_score).sum())
+    return result
 
 
 async def remove_temp_task():
