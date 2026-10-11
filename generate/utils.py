@@ -316,11 +316,7 @@ async def get_relic_sets_score(chara_id, relic_sets):
             "score": set_score
         })
 
-        total_score += set_score
-
-    # Ensure the maximum score for relic_sets is 30 points
-    if total_score > 30:
-        total_score = 30
+        total_score += min(set_score, 30)
 
     result_json["score"] = total_score
     result_json["set_scores"] = set_scores
