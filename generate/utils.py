@@ -230,15 +230,15 @@ async def get_relic_score(chara_id, relic_json):
 
 
 def get_relic_score_color(score):
-    if score <= 19:
+    if score < 20:
         return "#888c91"
-    elif 20 <= score <= 39:
+    elif score < 40:
         return "#428c88"
-    elif 40 <= score <= 59:
+    elif score < 60:
         return "#4c88c8"
-    elif 60 <= score <= 79:
+    elif score < 80:
         return "#a068d8"
-    elif 80 <= score:
+    else:
         return "#d2ad72"
 
 
