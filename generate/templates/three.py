@@ -21,7 +21,6 @@ DIM = "#5a606b"
 RADIUS = 18
 
 PORTRAIT_BOX = (40, 40, 560, 1040)
-PORTRAIT_ZOOM = 1.15
 HEADER_BOX = (590, 40, 1170, 200)
 STATS_BOX = (590, 216, 1170, 640)
 LIGHT_CONE_BOX = (590, 656, 1170, 750)
@@ -149,10 +148,8 @@ def draw_background(element_rgb):
 async def draw_portrait(img, helta_json):
     x0, y0, x1, y1 = PORTRAIT_BOX
     w, h = x1 - x0, y1 - y0
-    size = int(h * PORTRAIT_ZOOM)
-    top = int((size - h) * 0.35)
-    portrait = (await load_image(helta_json["portrait"], (size, size))).crop(
-        ((size - w) // 2, top, (size + w) // 2, top + h))
+    left = h * 7 // 15 - w // 2
+    portrait = (await load_image(helta_json["portrait"], (h, h))).crop((left, 0, left + w, h))
 
     shade = Image.new("RGBA", (w, h))
     shade_mask = Image.new("L", (1, h))
