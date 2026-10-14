@@ -7,7 +7,7 @@ import pathlib
 import aiohttp
 from PIL import ImageDraw, Image, ImageFont
 
-from generate.templates import one, two
+from generate.templates import one, two, three
 
 font_file_path = f"{os.path.dirname(os.path.abspath(__file__))}/assets/zh-cn.ttf"
 
@@ -17,3 +17,5 @@ async def generate_panel(uid="805477392", chara_id=1, template=2, is_hideUID=Fal
         return await one.generate_panel(uid=uid, chara_id=chara_id, is_hideUID=is_hideUID, calculating_standard=calculating_standard)
     elif template == 2:
         return await two.generate_panel(uid=uid, chara_id=chara_id, is_hideUID=is_hideUID, calculating_standard=calculating_standard, lang=lang, is_hide_roll=is_hide_roll)
+    elif template == 3:
+        return await three.generate_panel(uid=uid, chara_id=chara_id, is_hideUID=is_hideUID, calculating_standard=calculating_standard, lang=lang, is_hide_roll=is_hide_roll)

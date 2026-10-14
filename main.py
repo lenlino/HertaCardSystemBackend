@@ -105,10 +105,12 @@ async def trigger_error():
     division_by_zero = 1 / 0
 
 @app.get("/gen_card/{uid}")
-async def gen_card(uid: str, select_number: int, is_uid_hide: bool = False, is_hide_roll: bool = False,
-                   calculation_value: str = "compatibility", lang: str = "jp"):
+async def gen_card(uid: str, select_number: int, is_uid_hide: bool = True, is_hide_roll: bool = False,
+                   calculation_value: str = "compatibility", lang: str = "jp", template: int = 2):
+    if template not in (2, 3):
+        raise HTTPException(status_code=422)
     image_binary = io.BytesIO()
-    panel_img = await generate.generate.generate_panel(uid=uid, chara_id=int(select_number), template=2,
+    panel_img = await generate.generate.generate_panel(uid=uid, chara_id=int(select_number), template=template,
                                                        is_hideUID=is_uid_hide
                                                        , calculating_standard=calculation_value, lang=lang,
                                                        is_hide_roll=is_hide_roll)

@@ -208,8 +208,10 @@ async def get_relic_score(chara_id, relic_json):
     # サブの計算
     sub_affix_score = 0
     sub_affix_formulas = []
+    sub_weights = []
     for sub_affix_json in relic_json["sub_affix"]:
         sub_affix_type = sub_affix_json["type"]
+        sub_weights.append(weight_json[chara_id]["weight"][sub_affix_type])
         # print(f"{weight_json[chara_id]['weight'][sub_affix_type]}/{sub_affix_type}")
         # print(f"{weight_json[chara_id]['weight']}")
         score = (sub_affix_json["value"] / max_json[sub_affix_type]) * weight_json[chara_id]["weight"][sub_affix_type]
@@ -219,6 +221,7 @@ async def get_relic_score(chara_id, relic_json):
 
     result_json["score"] = main_affix_score * 0.5 + sub_affix_score * 0.5
     result_json["sub_formulas"] = sub_affix_formulas
+    result_json["sub_weights"] = sub_weights
     if "lang" in weight_json[chara_id]:
         result_json["name"] = weight_json[chara_id]["lang"]["jp"]
 
